@@ -2,10 +2,8 @@
 .Synopsis
    Short function to gather VMware snapshots metrics and send an email report.
 
-
 .DESCRIPTION
-   
-
+   Coming soon
 
 .EXAMPLE
     Get-HTMLSnapShotReport -VIServer vcenter.yourdomain.local -SmtpServer blah@yourdomain.com -to blah@yourdomain.com -from blahblah@yourdomain.com
