@@ -3,7 +3,7 @@
    Gathers all mailboxes that are either greater than 20GB or the archive is greater than 40GB and sends an email with an HTML report.
 
 .EXAMPLE
-    Get-HTMLMailboxReport -Path c:\temp -SmtpServer blah@yourdomain.com -to blah@yourdomain.com -from blahblah@yourdomain.com
+    Get-HTMLMailboxReport -ExchangeServer 'exchange.yourdomain.com -Path c:\temp -SmtpServer blah@yourdomain.com -to blah@yourdomain.com -from blahblah@yourdomain.com
 #>
 
 function Get-HTMLMailboxReport {
@@ -32,12 +32,12 @@ param (
 
 Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E2010
 
-Get-MailboxDatabase -server $ExchangeServer | Get-MailboxStatistics |`
+Get-MailboxDatabase -server $ExchangeServer | Get-MailboxStatistics | `
 					Where {($_.TotalItemSize -gt 20GB -and $_.DisplayName -notlike 'Personal*') -or `
 							($_.TotalItemSize -gt 40GB -and $_.DisplayName -like 'Personal*')} | `
 								Sort TotalItemSize, -Descending|Export-Csv $Path -NoTypeInformation
 
-$List = Import-csv $Path\HTMLReport.csv
+$List = Import-csv $Path
 
 # Fancy Spreadsheet
 $Header = @"
