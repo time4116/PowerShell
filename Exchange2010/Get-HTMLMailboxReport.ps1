@@ -11,6 +11,9 @@ function Get-HTMLMailboxReport {
 param (
 
 [Parameter(Mandatory=$true)]
+[string[]]$ExchangeServer = 'exchange.yourdomain.com', 
+
+[Parameter(Mandatory=$true)]
 [string[]]$Path = 'C:\temp\Mailboxes.csv', 
 
 [Parameter(Mandatory=$true)]
@@ -29,10 +32,10 @@ param (
 
 Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E2010
 
-Get-MailboxDatabase -server $ExchangeServer | Get-MailboxStatistics `
-| Where {($_.TotalItemSize -gt 20GB -and $_.DisplayName -notlike 'Personal*') -or `
-($_.TotalItemSize -gt 40GB -and $_.DisplayName -like 'Personal*')} `
-| Sort TotalItemSize, -Descending|Export-Csv $Path -NoTypeInformation
+Get-MailboxDatabase -server $ExchangeServer | Get-MailboxStatistics |`
+					Where {($_.TotalItemSize -gt 20GB -and $_.DisplayName -notlike 'Personal*') -or `
+							($_.TotalItemSize -gt 40GB -and $_.DisplayName -like 'Personal*')} | `
+								Sort TotalItemSize, -Descending|Export-Csv $Path -NoTypeInformation
 
 $List = Import-csv $Path\HTMLReport.csv
 
