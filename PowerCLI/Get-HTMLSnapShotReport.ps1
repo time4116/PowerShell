@@ -62,7 +62,7 @@ $SnapTotal = ($Report|Measure-Object 'SizeGB' -Sum).Sum
 
 $Report = $Report | Select VM,Name,Description,SizeGB,Created | ConvertTo-Html -Head $Header -PreContent "<p><h2>Current Snapshots: $NumberOfSnaps | Total GB: $SnapTotal</h2></p><br>"
 
-$Body = get-content c:\PowerCLI\SnapShotReport.html|out-string # PS 2.0 "get-content" does not have "-raw" flag so "out-string" was used instead
+$Body = $Report|out-string # PS 2.0 "get-content" does not have "-raw" flag so "out-string" was used instead
 (Send-MailMessage -SmtpServer $SmtpServer -From $Sender -To $Recipient -Subject "vCenter - Current Snapshot Report" -Body $Body -BodyAsHtml)
         
         }
