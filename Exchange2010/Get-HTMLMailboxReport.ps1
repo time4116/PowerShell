@@ -1,10 +1,9 @@
 <#
-.Synopsis
-   Short function to gather VMware snapshots metrics and send an email report.
 .DESCRIPTION
-   Coming soon!
+   Gathers all mailboxes that are either greater than 20GB or the archive is greater than 40GB and sends an email with an HTML report.
+
 .EXAMPLE
-    Get-HTMLSnapShotReport -VIServer vcenter.yourdomain.local -SmtpServer blah@yourdomain.com -to blah@yourdomain.com -from blahblah@yourdomain.com
+    Get-HTMLMailboxReport -Path c:\temp -SmtpServer blah@yourdomain.com -to blah@yourdomain.com -from blahblah@yourdomain.com
 #>
 
 function Get-HTMLMailboxReport {
@@ -12,7 +11,7 @@ function Get-HTMLMailboxReport {
 param (
 
 [Parameter(Mandatory=$true)]
-[string[]]$Path = 'C:\temp', 
+[string[]]$Path = 'C:\temp\Mailboxes.csv', 
 
 [Parameter(Mandatory=$true)]
 [string]$SmtpServer = 'YourSMTPServer@yourdomain.com',
@@ -33,7 +32,7 @@ Add-PSSnapin Microsoft.Exchange.Management.PowerShell.E2010
 Get-MailboxDatabase -server $ExchangeServer | Get-MailboxStatistics `
 | Where {($_.TotalItemSize -gt 20GB -and $_.DisplayName -notlike 'Personal*') -or `
 ($_.TotalItemSize -gt 40GB -and $_.DisplayName -like 'Personal*')} `
-| Sort TotalItemSize, -Descending|Export-Csv $Path\HTMLReport.csv -NoTypeInformation
+| Sort TotalItemSize, -Descending|Export-Csv $Path -NoTypeInformation
 
 $List = Import-csv $Path\HTMLReport.csv
 
@@ -57,5 +56,6 @@ $List = $List| Select User,SizeGB|sort SizeGB -Descending |ConvertTo-Html -Head 
 
 $Body = $list|out-string # PS 2.0 "get-content" does not have "-raw" flag so "out-string" was used instead
 (Send-MailMessage -SmtpServer $SmtpServer -From $Sender -To $Recipient -Subject "ExchangeServer Mailbox Over 20GB; Archive Over 40GB" -Body $Body -BodyAsHtml)
-}
+
+         }
 }
