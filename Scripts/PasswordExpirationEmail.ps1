@@ -88,6 +88,6 @@ if (($startdate) -le ($enddate))
 
 else
     {
-    # Send email to netadmins to decomission script
+    # Send email to user to decomission script
     Send-MailMessage -SmtpServer mail.test.com -From notifications@test.com -To "test@test.com" -Subject "Please Confirm Password Email Script Is Disabled! $pwdPolicy Day Limit Reached." -body "Located on SERVER as a scheduled task"
     }	
