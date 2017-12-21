@@ -65,7 +65,7 @@ if (($startdate) -le ($enddate))
 		# Add each user to report variable
 		$report += "Email sent to $Mail. Expiration in $pwdExpiration days or on $(($startdate).AddDays($pwdExpiration)). `n"
 
-	            # Takes the HTML template and replaces the text on the left with username and date.
+	        # Takes the HTML template and replaces the text on the left with username and date.
                 $html = get-content ($htmlpath + $htmlfilename) -raw
 			$var = foreach ($i in $html){
 			$i -replace "UserFirstName","$UserFirstName"
