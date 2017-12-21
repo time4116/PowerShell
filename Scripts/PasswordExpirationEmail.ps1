@@ -34,11 +34,11 @@ if (($startdate) -le ($enddate))
 	
 	$pwdPolicy = (Get-ADDefaultDomainPasswordPolicy).MaxPasswordAge.Days
     
-    $report = '' # Clear contents of report variable before processing script
+   	$report = '' # Clear contents of report variable before processing script
 	
-    # Make sure to set the following vars below (CONFIRM THESE)
+    	# Make sure to set the following vars below (CONFIRM THESE)
    	$logfile = "C:\temp\PasswordEmail\email_pass_report.log"
-    $htmlpath = "C:\temp\PasswordEmail\" # Be sure to include \ at the end of the path
+    	$htmlpath = "C:\temp\PasswordEmail\" # Be sure to include \ at the end of the path
 	$htmlfilename = 'Example.htm'
 
 	$OUs = "OU=test,DC=test,DC=local","OU=test,DC=test,DC=local"
@@ -53,32 +53,32 @@ if (($startdate) -le ($enddate))
 	$pwdLife = (($startdate) - $_.PasswordLastSet).Days
 	$pwdExpiration = $pwdPolicy - $pwdLife
 
-            # Condition: User must still be in the password cycle and password must expire in exactly 21 days.
-			if ($pwdExpiration -eq 21 -and $pwdlife -le ($pwdPolicy + 1)){
-				$date = ($startdate).AddDays($pwdExpiration)
-				$date = $date.DateTime -replace ',\W[2](.*?)*M','' # Strip off year and time using regular expressions
+            	# Condition: User must still be in the password cycle and password must expire in exactly 21 days.
+		if ($pwdExpiration -eq 21 -and $pwdlife -le ($pwdPolicy + 1)){
+		$date = ($startdate).AddDays($pwdExpiration)
+		$date = $date.DateTime -replace ',\W[2](.*?)*M','' # Strip off year and time using regular expressions
                 
                 # Remove below comment to check debugging...
-				#Write-host "Email sent to $Mail. Expiration in $pwdExpiration days" -ForegroundColor Green
-				Add-Content $logfile "$logdate:_______________Email sent to $Mail. Expiration in $pwdExpiration or $(($startdate).AddDays($pwdExpiration))."
-				
-				# Add each user to report variable
-				$report += "Email sent to $Mail. Expiration in $pwdExpiration days or on $(($startdate).AddDays($pwdExpiration)). `n"
+		#Write-host "Email sent to $Mail. Expiration in $pwdExpiration days" -ForegroundColor Green
+		Add-Content $logfile "$logdate:_______________Email sent to $Mail. Expiration in $pwdExpiration or $(($startdate).AddDays($pwdExpiration))."
+
+		# Add each user to report variable
+		$report += "Email sent to $Mail. Expiration in $pwdExpiration days or on $(($startdate).AddDays($pwdExpiration)). `n"
 
 	            # Takes the HTML template and replaces the text on the left with username and date.
                 $html = get-content ($htmlpath + $htmlfilename) -raw
-	                $var = foreach ($i in $html){
-	                $i -replace "UserFirstName","$UserFirstName"
-	                                            }# End
-	                $var = foreach ($i in $var){
-	                $i -replace "123Date","$date"
-	                                        }# End
-	            $var|out-file ($htmlpath + $htmlfilename + '_replaced.htm') -Encoding ascii
+			$var = foreach ($i in $html){
+			$i -replace "UserFirstName","$UserFirstName"
+						    }# End
+			$var = foreach ($i in $var){
+			$i -replace "123Date","$date"
+						}# End
+		$var|out-file ($htmlpath + $htmlfilename + '_replaced.htm') -Encoding ascii
 
                 # Send email to user that meets condition
-				Send-MailMessage -SmtpServer mail.test.com -From notifications@test.com -To $mail -Subject "Your Password Is Expiring!" -body $var -BodyAsHtml
+		Send-MailMessage -SmtpServer mail.test.com -From notifications@test.com -To $mail -Subject "Your Password Is Expiring!" -body $var -BodyAsHtml
 				                                               
-                                                            } # End 2nd if statement
+                                                            		} # End 2nd if statement
 				            } # End for loop
 				
                 # Send report with users who were sent an email
